@@ -2,25 +2,33 @@ var Jimp = require("jimp");
 
 var fileName = './wallpappers/download.jpg';
 
-
-
-var date2 = new Date("12/21/2019");
-var timeDiff = Math.abs(date2.getTime() -  Date.now());
-var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
-
-var imageCaption = `Faltam ${diffDays} para as férias `;
 var loadedImage;
 
+let date2 = new Date("12/21/2019");
 let name = 'sadasd';
 
 const argumentCommands = {
     '-h': () => {
-        console.log("Comandos:\n-h: Exibe esse texto de ajuda\n-n [NOME]: Define o nome do arquivo de saída\n");
+        console.log("Comandos:\n-h: Exibe esse texto de ajuda\n");
+        console.log("-n [NOME]: Define o nome do arquivo de saída\n");
+        console.log("-d [YYYY/MM/DD]: Define a data das férias\n");
         return false;
     },
     '-n': (args) => {
         name = `${args.splice(0,1)}`;
         return true;
+    },
+    '-d': (args) => {
+        try {
+            date2 = new Date(new Date(args.splice(0,1)).getTime()+10800000);
+            if (date2 == "Invalid Date") {
+                console.log("Erro ao validar a data inserida!\nO formato deve ser:\nYYYY/MM/DD");
+                return false;
+            }
+            return true;
+        } catch (e) {
+            console.log("Erro ao validar a data inserida!\n\nO formato deve ser: YYYY/MM/DD");
+        }
     }
 }
 
@@ -58,6 +66,9 @@ function main(args = process.argv.slice(2)) {
 }
 
 function writeInImage() {
+    var timeDiff = Math.abs(date2.getTime() -  Date.now());
+    var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+    var imageCaption = `Faltam ${diffDays} dias para as férias `;
     console.log(imageCaption)
     Jimp.read(fileName)
         .then(function (image) {
